@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import random
 
 class General(commands.Cog):
     def __init__(self, bot):
@@ -33,6 +34,7 @@ class General(commands.Cog):
 
         await ctx.send(embed=embed)
     
+    # Get a users Avatar
     @commands.command(aliases=["av"])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def avatar(self, ctx, user: discord.Member = None):
@@ -41,6 +43,51 @@ class General(commands.Cog):
         embed = discord.Embed(colour=discord.Colour.purple(), title=f"{user.name}'s Avatar", url=f"{user.avatar_url_as(format=ft)}")
         await ctx.send(embed=embed.set_image(url=f"{user.avatar_url_as(format=ft)}"))
 
+    @commands.command()
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def say(self, ctx, *, mes):
+        mes = mes.replace("@everyone", "@ everyone")
+        mes = mes.replace("@here", "@ here")
+        await ctx.message.delete()
+        await ctx.send(mes)
+
+    @commands.command()
+    @commands.cooldown(1, 3, commands.BucketType.user)
+    async def flip(self, ctx):
+        hf = ["Heads", "Tails"]
+        ch = random.choice(hf)
+        await ctx.send(ch)
+
+    @commands.command()
+    @commands.cooldown(1, 3, commands.BucketType.user)
+    async def rps(self, ctx, *, choice = None):
+        if choice is None:
+            return await ctx.send("You need to pick from rock paper and scissors")
+
+        choices = ["rock", "paper", "scissors"]
+        pick = random.choice(choices)
+
+        if pick == choice.lower():
+            await ctx.send(f"You picked {choice} and I picked {pick}. Tie!")
+
+        if pick == "rock" and choice.lower() == "scissors":
+            await ctx.send(f"You picked {choice} and I picked {pick}. You Lose!")
+
+        if pick == "rock" and choice.lower() == "paper":
+            await ctx.send(f"You picked {choice} and I picked {pick}. You Win!")
+
+        if pick == "paper" and choice.lower() == "rock":
+            await ctx.send(f"You picked {choice} and I picked {pick}. You Lose!")
+
+        if pick == "paper" and choice.lower() == "scissors":
+            await ctx.send(f"You picked {choice} and I picked {pick}. You Win!")
+
+        if pick == "scissors" and choice.lower() == "rock":
+            await ctx.send(f"You picked {choice} and I picked {pick}. You Win!")
+
+        if pick == "scissors" and choice.lower() == "paper":
+            await ctx.send(f"You picked {choice} and I picked {pick}. You Lose!")
+        
 
 
 def setup(bot):
