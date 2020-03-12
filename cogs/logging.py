@@ -49,6 +49,24 @@ class Logging(commands.Cog):
                         channel = self.bot.get_channel(chid)
                         await channel.send(embed=embed)
                         return
+    
+    @commands.Cog.listener()
+    async def on_message_edit(self, before, after):
+        if before != after:
+            with open("logging.json") as json_file:
+                data = json.load(json_file)
+                ft = "gif" if after.author.is_avatar_animated() else "png"
+                embed = discord.Embed(title=f"Message edited in {after.channel.name}", colour=discord.Colour.purple())
+                embed.set_author(name=after.author.name, icon_url=after.author.avatar_url_as(format=ft))
+                embed.add_field(name="Before Edit:", value=before.content)
+                embed.add_field(name="After Edit:", value=after.content, inline=False)
+
+                for key in data["logs"]:
+                    if key['server_id'] == str(after.guild.id):
+                        chid = int(key['channel_id'])
+                        channel = self.bot.get_channel(chid)
+                        await channel.send(embed=embed)
+                        return
 
 
 def setup(bot):
