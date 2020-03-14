@@ -3,7 +3,6 @@ from discord.ext import commands
 import random
 from datetime import datetime
 
-
 class Games(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -27,11 +26,8 @@ class Games(commands.Cog):
         final = end - begin
         res = f"{final.seconds} seconds and " + f"{final.microseconds}"[:2]
 
-        # new_embed = discord.Embed(colour=discord.Colour.purple(), title=f"{res}")
-        # new_embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url_as(format=ft)
         embed.add_field(name="Results", value=f"{res} milliseconds")
         await mes.edit(embed=embed)
-        # await ctx.send(embed=new_embed)
  
     @commands.command()
     @commands.cooldown(1, 3, commands.BucketType.user)
