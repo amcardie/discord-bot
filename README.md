@@ -5,5 +5,5 @@ It's not going to be a very specialized bot more or less just a general bot for 
 
 TODO:  
 Add more moderation commands  
-Learn how to make more complex game commands like tic-tac-toe  
+Learn how to make more complex games  
 Make a custom help embed
