@@ -6,6 +6,10 @@ def write_json(data, filename="logging.json"):
     with open(filename, 'w') as f:
         json.dump(data, f, indent=4)
 
+def write_pref(data, filename="lp.json"):
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=4)
+
 class Logging(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -52,11 +56,11 @@ class Logging(commands.Cog):
                     else:
                         key['logdelete'] = "True"
                         key['logedit'] = "True"
-                        write_json(data)
+                        write_pref(data)
                         return
         
             data.append(ap)
-            write_json(data)
+            write_pref(data)
     
     @log.command()
     async def disable(self, ctx):
@@ -74,11 +78,11 @@ class Logging(commands.Cog):
                     else:
                         key['logdelete'] = "False"
                         key['logedit'] = "False"
-                        write_json(data)
+                        write_pref(data)
                         return
         
             data.append(ap)
-            write_json(data)
+            write_pref(data)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
@@ -88,7 +92,7 @@ class Logging(commands.Cog):
             pref = json.load(pre)
             for key in pref["prefs"]:
                 if key["server_id"] == str(message.guild.id):
-                    if key["logedit"] == "True":
+                    if key["logdelete"] == "True":
                         with open("logging.json") as json_file:
                             data = json.load(json_file)
                             ft = "gif" if message.author.is_avatar_animated() else "png"
@@ -96,7 +100,6 @@ class Logging(commands.Cog):
                             embed.set_author(name=message.author.name, icon_url=message.author.avatar_url_as(format=ft))
                             embed.add_field(name=f"**{message.content}**", value=f"\u200b")
                             embed.set_footer(text=f"Author ID: {message.author.id} | Message ID: {message.id}")
-
                             for key in data["logs"]:
                                 if key['server_id'] == str(message.guild.id):
                                     chid = int(key['channel_id'])
@@ -112,7 +115,7 @@ class Logging(commands.Cog):
             pref = json.load(pre)
             for key in pref["prefs"]:
                 if key["server_id"] == str(after.guild.id):
-                    if pref["logedit"] == "True":
+                    if key['logedit'] == "True":
                         if before != after:
                             with open("logging.json") as json_file:
                                 data = json.load(json_file)
