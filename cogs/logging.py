@@ -88,7 +88,7 @@ class Logging(commands.Cog):
             pref = json.load(pre)
             for key in pref["prefs"]:
                 if key["server_id"] == str(message.guild.id):
-                    if pref["logedit"] == "True":
+                    if key["logedit"] == "True":
                         with open("logging.json") as json_file:
                             data = json.load(json_file)
                             ft = "gif" if message.author.is_avatar_animated() else "png"
