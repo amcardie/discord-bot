@@ -75,7 +75,7 @@ class Moderation(commands.Cog):
                 await member.add_roles(role)
                 if mutetime > 0:
                     await ctx.send(f"Muted {member.name} for {mutetime * 60} minutes")
-                elif mutetime == 0:
+                else:
                     await ctx.send(f"Muted {member.name}")
         
         if mutetime > 0:
