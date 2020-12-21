@@ -56,7 +56,7 @@ class Games(commands.Cog):
             await ctx.send(embed=embed) 
             
         else:
-            await embed.add_field(name="You Lose!", value=f"`You picked {choice} and I picked {pick}.`")
+            embed.add_field(name="You Lose!", value=f"`You picked {choice} and I picked {pick}.`")
             await ctx.send(embed=embed) 
 
 def setup(bot):
