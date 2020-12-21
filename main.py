@@ -14,6 +14,26 @@ with open("preferences.json") as f:
 # Setting up the bot
 bot = commands.Bot(command_prefix=prefix)
 
+# From https://gist.github.com/InterStella0/b78488fb28cadf279dfd3164b9f0cf96
+class CustomHelp(commands.MinimalHelpCommand):
+    async def send_pages(self):
+        destination = self.get_destination()
+        for page in self.paginator.pages:
+            emby = discord.Embed(description=page)
+            await destination.send(embed=emby)
+    
+    async def send_command_help(self, command):
+        embed = discord.Embed(colour=discord.Colour.purple(), title=self.get_command_signature(command))
+        embed.add_field(name="Help", value=command.help)
+        alias = command.aliases
+        if alias:
+            embed.add_field(name="Aliases", value=", ".join(alias), inline=False)
+    
+        channel = self.get_destination()
+        await channel.send(embed=embed)
+
+bot.help_command = CustomHelp()
+
 # On ready function to let me know when the bot is online
 @bot.event
 async def on_ready():
