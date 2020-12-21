@@ -14,6 +14,9 @@ class Moderation(commands.Cog):
     @commands.command(aliases=["clear"])
     @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx, amount: int = 10):
+        """
+        Purges number of messages.
+        """
         if amount > 1000:
             return await ctx.send("Too many messages, limit is 1k", delete_after=10)
         await ctx.message.delete()
@@ -26,6 +29,9 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member = None, reason: str = None):
+        """
+        Kicks a given member.
+        """
         if reason is None:
             reason = "No reason given"
         if member is None:
@@ -43,6 +49,9 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member = None, reason: str = None):
+        """
+        Bans a given member.
+        """
         if reason is None:
             reason = "No reason given"
         if member is None:
@@ -58,8 +67,11 @@ class Moderation(commands.Cog):
             return print(e)
 
     @commands.command()
-    @commands.has_permissions(manage_members=True)
+    @commands.has_permissions(manage_roles=True)
     async def mute(self, ctx, members: discord.Member = None, mutetime: int = 0):
+        """
+        Mutes a given member.
+        """
         if not members:
             return await ctx.send("You need to mention people to mute", delete_after=5)
 
@@ -88,6 +100,9 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_roles=True)
     async def unmute(self, ctx, members: discord.Member = None):
+        """
+        Unmutes a given member.
+        """
         if not members:
             return await ctx.send("You need to mention people to mute", delete_after=5)
 
