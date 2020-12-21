@@ -1,9 +1,16 @@
 # The libraries im gonna be using
 import discord
-from discord.ext import commands
 import json
 import time
 import os
+import logging
+from discord.ext import commands
+
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 # Getting token and prefix from a seperate file
 with open("preferences.json") as f:
