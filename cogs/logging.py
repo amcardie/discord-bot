@@ -16,11 +16,16 @@ class Logging(commands.Cog):
         self.bot = bot
 
     @commands.group(invoke_without_command=True)
+    @commands.has_permissions(manage_guild=True)
     async def log(self, ctx):
         return await ctx.send(f"Availabe log commands: channel, enable, disable. Note: Log comes defaulted as disabled so you must do {ctx.prefix}log enable after/before setting channel")
     
     @log.command()
+    @commands.has_permissions(manage_guild=True)
     async def channel(self, ctx, channel: discord.TextChannel = None):
+        """
+        Sets the channel for the logs to be sent to.
+        """
         if channel is None:
             return await ctx.send("Please specify a channel to send logs to")
         ap = {
@@ -42,7 +47,11 @@ class Logging(commands.Cog):
             write_json(data)
     
     @log.command()
+    @commands.has_permissions(manage_guild=True)
     async def enable(self, ctx):
+        """
+        Enables Logging.
+        """
         ap = {
             "server_id": str(ctx.guild.id),
             "logdelete": "True",
@@ -64,7 +73,11 @@ class Logging(commands.Cog):
             write_pref(data)
     
     @log.command()
+    @commands.has_permissions(manage_guild=True)
     async def disable(self, ctx):
+        """
+        Disables Logging.        
+        """
         ap = {
             "server_id": str(ctx.guild.id),
             "logdelete": "False",
