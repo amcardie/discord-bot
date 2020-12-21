@@ -1,3 +1,2 @@
 # discord-bot
-outdated
-
+Fixed most of the code, looks much better now.
