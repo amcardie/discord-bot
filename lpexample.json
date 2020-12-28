@@ -2,7 +2,7 @@
   "prefs": [
     {
       "server_id": "123",
-      "log": "True"
+      "log": "False"
     }
   ]
 }
