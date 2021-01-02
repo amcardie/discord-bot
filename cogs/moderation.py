@@ -1,11 +1,6 @@
 import discord
 from discord.ext import commands
 import asyncio
-import json
-
-def write_json(data, filename="logging.json"):
-    with open(filename, 'w') as f:
-        json.dump(data, f, indent=4)
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
