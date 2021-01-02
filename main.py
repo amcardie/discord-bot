@@ -4,13 +4,16 @@ import json
 import time
 import os
 import logging
+import asyncio
 from discord.ext import commands
+intents = discord.Intents.default()
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
+
 
 # Getting token and prefix from a seperate file
 with open("preferences.json") as f:
@@ -19,7 +22,7 @@ with open("preferences.json") as f:
     prefix = t["prefix"]
 
 # Setting up the bot
-bot = commands.Bot(command_prefix=prefix)
+bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 # From https://gist.github.com/InterStella0/b78488fb28cadf279dfd3164b9f0cf96
 class CustomHelp(commands.MinimalHelpCommand):
@@ -41,16 +44,6 @@ class CustomHelp(commands.MinimalHelpCommand):
 
 bot.help_command = CustomHelp()
 
-# On ready function to let me know when the bot is online
-@bot.event
-async def on_ready():
-    print("Bot online")
-    print(f"Ready for commands in {len(bot.guilds)} server(s)")
-    for file in os.listdir("./cogs"):
-        if file.endswith(".py"):
-            bot.load_extension(f"cogs.{file[:-3]}")
-            print(f"loaded cog: {file}")
-
 @bot.command()
 async def ping(ctx):
     # From Modelmat#8218's tag in discord.py discord server
@@ -63,6 +56,11 @@ async def ping(ctx):
 # The code above is pretty much the only thing thats gonna be in this file for now for commands i'm gonna be using cogs because its much faster
 # The code below is all for loading/unloading cogs
 
+for cog in os.listdir("./cogs"):
+     if cog.endswith(".py"):
+        bot.load_extension(f"cogs.{cog[:-3]}")
+        print(f"loaded cog: {cog}")
+
 @bot.command()
 async def load(ctx, *, cog):
     bot.load_extension(f"cogs.{cog}")
@@ -74,8 +72,16 @@ async def unload(ctx, cog):
     await ctx.send(f"Unloaded cog: {cog}")
 
 @bot.command()
-async def reload(ctx, ext):
-    bot.reload_extension(f"cogs.{ext}")
-    await ctx.send(f"Reloaded cog: {ext}")
+async def reload(ctx, ext = None):
+    cogs = "" 
+    if not ext:
+        for cog in os.listdir("./cogs"):
+            if cog.endswith(".py"):
+                bot.reload_extension(f"cogs.{cog[:-3]}")
+                cogs += f"\n{cog[:-3].upper()} cog"
+        await ctx.send(f"Reloaded```{cogs}```")
+    else:
+        bot.reload_extension(f"cogs.{ext}")
+        return await ctx.send(f"Reloaded cog: {ext}")
 
 bot.run(token)
