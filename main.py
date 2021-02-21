@@ -62,16 +62,19 @@ for cog in os.listdir("./cogs"):
         print(f"loaded cog: {cog}")
 
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def load(ctx, *, cog):
     bot.load_extension(f"cogs.{cog}")
     await ctx.send(f"Loaded cog: {cog}")
 
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def unload(ctx, cog):
     bot.unload_extension(f"cogs.{cog}")
     await ctx.send(f"Unloaded cog: {cog}")
 
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def reload(ctx, ext = None):
     cogs = "" 
     if not ext:
