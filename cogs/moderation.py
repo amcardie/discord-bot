@@ -2,6 +2,13 @@ import discord
 from discord.ext import commands
 import asyncio
 
+def getMemberRoles(member):
+    mroles = []
+    for role in member.roles:
+        if role.name != "@everyone":
+            mroles.append(role)
+    return mroles
+
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -63,57 +70,44 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_roles=True)
-    async def mute(self, ctx, members: discord.Member = None, mutetime: int = 0):
+    async def mute(self, ctx, member: discord.Member = None, time: int = 1, s: str = 'm'):
         """
         Mutes a given member.
         """
-        if not members:
+        if not member:
             return await ctx.send("You need to mention people to mute", delete_after=5)
-
+        
         role = discord.utils.get(ctx.guild.roles, name="Muted")
+
+        memroles = getMemberRoles(member)
 
         if not role:
             return await ctx.send("Couldn't find mute role, make sure theres a role called 'Muted'")
 
-        for member in members:
-            if self.bot.user == member:
-                return await ctx.send("I can't mute myself")
-            else:
-                await member.add_roles(role)
-                if mutetime > 0:
-                    await ctx.send(f"Muted {member.name} for {mutetime * 60} minutes")
-                else:
-                    await ctx.send(f"Muted {member.name}")
-        
-        if mutetime > 0:
-            while role in ctx.author.roles:
-                await asyncio.sleep(mutetime*60)
-                for member in members:
-                    await member.remove_roles(role)
-                    await ctx.send(f"{member.name} automatically unmuted")
+        for memrole in memroles:
+            await member.remove_roles(memrole)
 
-    @commands.command()
-    @commands.has_permissions(manage_roles=True)
-    async def unmute(self, ctx, members: discord.Member = None):
-        """
-        Unmutes a given member.
-        """
-        if not members:
-            return await ctx.send("You need to mention people to mute", delete_after=5)
+        if self.bot.user == member:
+            return await ctx.send("I can't mute myself")
+        else:
+            await member.add_roles(role)
+            await ctx.send(f"Muted {member} for {time} {s}")
 
-        role = discord.utils.get(ctx.guild.roles, name="Muted")
+            if s == "s":
+                await asyncio.sleep(time)
+            elif s == "m":
+                await asyncio.sleep(time * 60)
+            elif s == "h":
+                await asyncio.sleep(time*60*60)
+            elif s == "d":
+                await asyncio.sleep(time*60*60*24)
+            
+            await member.remove_roles(role)
+            await ctx.send(f"automatically unmuted {member}")
 
-        if not role:
-            return await ctx.send("Couldn't find mute role, make sure theres a role called 'Muted'")
-
-        for member in members:
-            if self.bot.user == member:
-                return await ctx.send("I can't unmute myself because I can't be muted")
-            else:
-                await member.remove_roles(role)
-                await ctx.send(f"Unmuted {member.name}")
-        
+            for memrole in memroles:
+                await member.add_roles(memrole)
+    
 def setup(bot):
     bot.add_cog(Moderation(bot))
         
-
