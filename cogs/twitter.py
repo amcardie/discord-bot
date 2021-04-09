@@ -59,7 +59,12 @@ class Twitter(commands.Cog):
         if str(reaction.message.guild.id) == "your_guild_id": # You can remove this if you want this to be done in every server your bot is in
             if str(reaction.emoji.name) == "tweet":
                 if reaction.count >= 3:
-                    if reaction.message.attachments[0]:
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        if str(reaction.message.guild.id) == "788523811845701683":
+            if str(reaction.emoji.name) == "tweet":
+                if reaction.count >= 1:
+                    try:
                         image_url = reaction.message.attachments[0].url
                         filename = "capture.png"
                         r = requests.get(image_url, stream = True)
@@ -85,7 +90,7 @@ class Twitter(commands.Cog):
                                 self.twitter.update_status(status=None, media_ids=[response['media_id']])
                             except Exception:
                                 await ctx.send("Something went wrong")
-                    else:
+                    except IndexError:
                         try:
                             self.twitter.update_status(status=reaction.message.content)
                         except Exception:
