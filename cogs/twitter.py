@@ -28,7 +28,7 @@ class Twitter(commands.Cog):
             return await ctx.send("You need to put something to omething to tweet")
         else:
             self.twitter.update_status(status=content)
-            tweet = self.twitter.get_user_timeline(screen_name="oogoog13", count=1)
+            tweet = self.twitter.get_user_timeline(screen_name="your_accounts_username", count=1)
             gettweet = [d['id'] for d in tweet]
             tweetid = gettweet[0]
             url = f"https://twitter.com/oogoog13/status/{tweetid}"
