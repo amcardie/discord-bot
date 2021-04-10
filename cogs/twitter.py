@@ -56,11 +56,6 @@ class Twitter(commands.Cog):
     
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
-        if str(reaction.message.guild.id) == "your_guild_id": # You can remove this if you want this to be done in every server your bot is in
-            if str(reaction.emoji.name) == "tweet":
-                if reaction.count >= 3:
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
         if str(reaction.message.guild.id) == "788523811845701683":
             if str(reaction.emoji.name) == "tweet":
                 if reaction.count >= 1:
@@ -99,7 +94,7 @@ class Twitter(commands.Cog):
                     tweet = self.twitter.get_user_timeline(screen_name="oogoog13", count=1)
                     gettweet = [d['id'] for d in tweet]
                     tweetid = gettweet[0]
-                    url = f"https://twitter.com/oogoog13/status/{tweetid}"
+                    url = f"https://twitter.com/your_username_here/status/{tweetid}"
                     await reaction.message.channel.send(url)                   
 
 def setup(bot):
