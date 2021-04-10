@@ -91,7 +91,7 @@ class Twitter(commands.Cog):
                         except Exception:
                             await ctx.send("Something went wrong")
 
-                    tweet = self.twitter.get_user_timeline(screen_name="oogoog13", count=1)
+                    tweet = self.twitter.get_user_timeline(screen_name="your_username_here", count=1)
                     gettweet = [d['id'] for d in tweet]
                     tweetid = gettweet[0]
                     url = f"https://twitter.com/your_username_here/status/{tweetid}"
