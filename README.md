@@ -1,2 +1,2 @@
 # discord-bot
-Fixed most of the code, looks much better now.
+join my test server for my bot if you want lol https://discord.gg/BfvmVtzbhQ
