@@ -20,8 +20,8 @@ def get_prefix(bot, message):
 
     return prefixes[str(message.guild.id)]
 
-# Getting token and prefix from a seperate file
-with open("preferences.json") as f:
+# Getting token from a seperate file
+with open("token.json") as f:
     t = json.load(f)
     token = t["token"]
 
