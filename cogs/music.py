@@ -1,5 +1,7 @@
 """
 All of this is from follow the tutorial from carberra | https://github.com/Carberra/discord.py-music-tutorial | https://www.youtube.com/watch?v=tZPrkKT9QHc&list=PLYeOw6sTSy6ZIfraPiUsJWuxjqoL47U3u |
+
+You'll need to download https://jdk.java.net/archive/ version 13.0.2 and the latest version of https://ci.fredboat.com/viewLog.html?buildId=lastSuccessful&buildTypeId=Lavalink_Build&tab=artifacts&guest=1
 """
 
 import asyncio
