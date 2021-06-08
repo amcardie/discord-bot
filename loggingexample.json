@@ -1,8 +1,10 @@
-{
-  "logs": [
-    {
-      "server_id": "123",
-      "channel_id": "214"
-    }
-  ]
-}
+[
+  {
+    "server_id": "123",
+    "channel_id": "456"
+  },
+  {
+    "server_id": "789",
+    "channel_id": "321"
+  }
+]
