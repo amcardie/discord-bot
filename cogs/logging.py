@@ -1,7 +1,7 @@
-from os import write
 import discord
 from discord.ext import commands
 from datetime import datetime
+import asyncio
 import json
 
 def write_json(data, filename="logging.json"):
@@ -98,6 +98,53 @@ class Logging(commands.Cog):
 
                     channel = self.bot.get_channel(int(key['channel_id']))
                     return await channel.send(embed=embed)
+    
+    @commands.Cog.listener()
+    async def on_member_ban(self, guild, user):
+        with open("logging.json") as f:
+            data = json.load(f)
+        
+        await asyncio.sleep(1)
+        
+        async for entry in guild.audit_logs(limit=1, action=discord.AuditLogAction.ban):
+            audit = entry
+
+        for key in data:
+            if key["server_id"] == str(guild.id):
+                ft = "gif" if user.is_avatar_animated() else "png"
+                now = datetime.now()
+
+                embed = discord.Embed(description=f"{user} has been banned", colour=discord.Colour.purple())
+                embed.set_author(name=user.name, icon_url=user.avatar_url_as(format=ft))
+                embed.add_field(name="Member Info", value=f"```Name: {user}\nID: {user.id}```", inline=False)
+                embed.add_field(name="Reason:", value=audit.reason, inline=False)
+                embed.set_footer(text=f"{audit.user} | {now.strftime('%D %I:%M:%S %p')}", icon_url=audit.user.avatar_url_as(format=ft))
+
+                channel = self.bot.get_channel(int(key['channel_id']))
+                await channel.send(embed=embed)
+    
+    @commands.Cog.listener()
+    async def on_member_unban(self, guild, user):
+        with open("logging.json") as f:
+            data = json.load(f)
+        
+        await asyncio.sleep(1)
+        
+        async for entry in guild.audit_logs(limit=1, action=discord.AuditLogAction.unban):
+            audit = entry
+        
+        for key in data:
+            if key["server_id"] == str(guild.id):
+                ft = "gif" if user.is_avatar_animated() else "png"
+                now = datetime.now()
+
+                embed = discord.Embed(description=f"{user} has been unbanned", colour=discord.Colour.purple())
+                embed.set_author(name=user.name, icon_url=user.avatar_url_as(format=ft))
+                embed.add_field(name="Member Info", value=f"```Name: {user}\nID: {user.id}```", inline=False)
+                embed.set_footer(text=f"{audit.user} | {now.strftime('%D %I:%M:%S %p')}", icon_url=audit.user.avatar_url_as(format=ft))
+
+                channel = self.bot.get_channel(int(key["channel_id"]))
+                await channel.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Logging(bot))
