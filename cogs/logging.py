@@ -1,3 +1,4 @@
+from os import write
 import discord
 from discord.ext import commands
 from datetime import datetime
@@ -7,43 +8,63 @@ def write_json(data, filename="logging.json"):
     with open(filename, 'w') as f:
         json.dump(data, f, indent=4)
 
-def write_pref(data, filename="logging.json"):
-    with open(filename, 'w') as f:
-        json.dump(data, f, indent=4)
-
 class Logging(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     @commands.has_permissions(manage_guild=True)
-    async def log(self, ctx, channel: discord.TextChannel = None):
+    async def log(self, ctx, channel: discord.TextChannel =  None):
         """
-        Enables Logging.
+        Enables logging.
         """
         if channel is None:
             return await ctx.send("Please specify a channel to send logs to")
 
-        ap = {
-            "server_id": str(ctx.guild.id),
-            "channel_id": str(channel.id),
-        }
+        ap = {}
         with open("logging.json") as pre:
             data = json.load(pre)
-            
-        temp = data["logs"]
-        y = ap
-        write_json(data)
+            for x in data:
+                if x["channel_id"] == str(channel.id):
+                    return await ctx.reply(f"{channel.mention} is already this servers logging channel", mention_author=False)
+                if x["server_id"] == str(ctx.guild.id):
+                    x["channel_id"] = str(channel.id)
 
-        temp.append(y)
-        write_json(data)
+                    await ctx.reply(f"I've changed this servers logging channel to {channel.mention}", mention_author=False)
+                    return write_json(data)
+        
+        ap["server_id"] = str(ctx.guild.id)
+        ap["channel_id"] = str(channel.id)
+        data.append(ap)
+
+        await ctx.reply(f"I've made this servers logging channel: {channel.mention}", mention_author=False)
+        return write_json(data)
+
+    @commands.command(aliases=["rlogs", "dlogs"])
+    @commands.has_permissions(manage_guild=True)
+    async def removelogs(self, ctx):
+        """
+        Disables logging for current server
+        """
+        new_data = []
+        with open("logging.json", "r") as f:
+            temp = json.load(f)
+        
+        for entry in temp:
+            if entry["server_id"] == str(ctx.guild.id):
+                pass
+            else:
+                new_data.append(entry)
+
+        await ctx.reply("Successfully removed this servers logging", mention_author=False)
+        write_json(new_data)
    
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         if message.author.id == self.bot.user.id: return
         with open("logging.json") as pre:
             data = json.load(pre)
-            for key in data["logs"]:
+            for key in data:
                 if key["server_id"] == str(message.guild.id):
                     ft = "gif" if message.author.is_avatar_animated() else "png"
                     now = datetime.now()
@@ -62,7 +83,7 @@ class Logging(commands.Cog):
         if after.author.id == self.bot.user.id: return
         with open("logging.json") as pre:
             data = json.load(pre)
-            for key in data["logs"]:
+            for key in data:
                 if key["server_id"] == str(after.guild.id):
                     ft = "gif" if after.author.is_avatar_animated() else "png"
                     now = datetime.now()
