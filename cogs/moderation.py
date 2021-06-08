@@ -26,7 +26,7 @@ class Moderation(commands.Cog):
     
     @commands.command(aliases=["clear"])
     @commands.has_permissions(manage_messages=True)
-    async def purge(self, ctx, amount: int = 10):
+    async def purge(self, ctx, amount: int = 1):
         """
         Purges number of messages.
         """
@@ -35,9 +35,9 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
         await ctx.channel.purge(limit=amount)
         if amount >= 2:
-            await ctx.reply(f"Purged {amount} mesages", delete_after=3)
+            await ctx.send(f"Purged {amount} mesages", delete_after=3)
         else:
-            await ctx.reply(f"Purged {amount} message", delete_after=3)
+            await ctx.send(f"Purged {amount} message", delete_after=3)
     
     @commands.command()
     @commands.has_permissions(kick_members=True)
@@ -67,68 +67,42 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member: discord.Member = None, *, reason: str = None):
+    async def ban(self, ctx, user: discord.User = None, *, reason: str = None):
         """
         Bans a given member.
         """
-        if member is None:
-            return await ctx.reply("Please specify a member to ban", delete_after=3)
-
-        if member.id == self.bot.user.id:
-            return await ctx.reply("I can't ban myself", delete_after=3)
-
         try:
+            if user is None:
+                return await ctx.reply("Please specify a member to ban", delete_after=3)
+                
+            if user.id == self.bot.user.id:
+                return await ctx.reply("I can't ban myself", delete_after=3)
+
             if reason is None:
                 reason = f"banned by {ctx.author.name}"
-                await member.ban(reason=reason)
-                return await ctx.reply(f"{member.name} has been banned", mention_author=False, delete_after=15)
+                await ctx.guild.ban(discord.Object(id=user.id), reason=f"banned by {ctx.author.name}")
+                return await ctx.reply(f"{user.mention} has been banned", mention_author=False)
 
             else:
-                await ctx.reply(f"{member.name} has been banned for **`{reason}`**", mention_author=False, delete_after=15)
+                await ctx.reply(f"{user.mention} has been banned for **`{reason}`**", mention_author=False)
                 reason += f" banned by {ctx.author.name}"
-                await member.ban(reason=reason)
+                await ctx.guild.ban(discord.Object(id=user.id), reason=reason)
 
         except Exception as e:
             await ctx.reply(e, delete_after=5)
             return print(e)
-    
-    @commands.command(aliases=["hban", "hb"])
-    @commands.has_permissions(ban_members=True)
-    async def hackban(self, ctx, member: int = None, *, reason: str = None):
-        """
-        Bans a given member.
-        """
-        if member is None:
-            return await ctx.reply("Please specify a member to ban", delete_after=5)
 
-        if member == self.bot.user.id:
-            return await ctx.reply("I can't ban myself", delete_after=5)
-
-        try:
-            if reason is None:
-                await ctx.guild.ban(discord.Object(id=member), reason=f"banned by {ctx.author.name}")
-                await ctx.reply(f"{member.name} has been banned")
-
-            else:
-                await ctx.reply(f"{member.name} has been banned for **`{reason}`**")
-                reason += f" banned by {ctx.author}"
-                await ctx.guild.ban(discord.Object(id=member), reason=reason)
-
-        except Exception as e:
-            await ctx.reply(e, delete_after=5)
-            return print(e)
     
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def unban(self, ctx, member: int):
-        if not member:
+    async def unban(self, ctx, member: discord.User = None):
+        if member is None:
             return
 
         else:
-            mem = await self.bot.fetch_user(member)
             try:
-                await ctx.guild.unban(mem)
-                await ctx.reply(f"Unbanned {mem.name}")
+                await ctx.guild.unban(member)
+                await ctx.reply(f"Unbanned {member.name}")
                 
             except Exception as e:
                 print(e)
