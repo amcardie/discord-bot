@@ -45,6 +45,10 @@ class Moderation(commands.Cog):
         """
         Kicks a given member.
         """
+
+        if member.top_role >= ctx.author.top_role:
+            return await ctx.send("you can't kick that person")
+
         if reason is None:
             reason = f"No reason given, kicked by {ctx.author}"
 
@@ -71,6 +75,10 @@ class Moderation(commands.Cog):
         """
         Bans a given member.
         """
+        mem = await ctx.guild.fetch_member(user.id)
+        if mem.top_role >= ctx.author.top_role:
+            return await ctx.send("you can't ban that person")
+
         try:
             if user is None:
                 return await ctx.reply("Please specify a member to ban", delete_after=3)
@@ -112,6 +120,9 @@ class Moderation(commands.Cog):
     async def mute(self, ctx, member: discord.Member, *, time:TimeConverter = None):
         """Mutes a member for the specified time"""
 
+        if member.top_role >= ctx.author.top_role:
+            return await ctx.send("you can't mute that person")
+
         role = discord.utils.get(ctx.guild.roles, name="Muted")
         await member.add_roles(role)
         await ctx.reply((f"Muted {member} for {time}s" if time else f"Muted {member}"))
@@ -125,7 +136,7 @@ class Moderation(commands.Cog):
     async def unmute(self, ctx, member: discord.Member = None):
         if not member:
             return await ctx.reply("You need to mention someone to unmute", delete_after=5)
-        
+                
         role = discord.utils.get(ctx.guild.roles, name="Muted")
     
         if not role:
@@ -140,6 +151,6 @@ class Moderation(commands.Cog):
                 await ctx.reply(f"Unmuted {member.mention}")
             else:
                 await ctx.reply(f"{member.name} is not muted")
-        
+    
 def setup(bot):
     bot.add_cog(Moderation(bot))
