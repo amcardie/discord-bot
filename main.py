@@ -99,20 +99,20 @@ print("loaded " + ', '.join(cogs))
         
 
 @bot.command()
-@commands.has_permissions(administrator=True)
 async def load(ctx, *, cog):
+    if not ctx.author.id == bot_owner_id: return
     bot.load_extension(f"cogs.{cog}")
     await ctx.send(f"Loaded cog: {cog}")
 
 @bot.command()
-@commands.has_permissions(administrator=True)
 async def unload(ctx, cog):
+    if not ctx.author.id == bot_owner_id: return
     bot.unload_extension(f"cogs.{cog}")
     await ctx.send(f"Unloaded cog: {cog}")
 
-@bot.command()
-@commands.has_permissions(administrator=True)
+@bot.command(aliases=["r"])
 async def reload(ctx, ext = None):
+    if not ctx.author.id == bot_owner_id: return
     cogs = "" 
     if not ext:
         for cog in os.listdir("./cogs"):
@@ -120,7 +120,7 @@ async def reload(ctx, ext = None):
                 continue
             if cog.endswith(".py"):
                 bot.reload_extension(f"cogs.{cog[:-3]}")
-                cogs += f"\n{cog[:-3].upper()} cog"
+                cogs += f"{cog[:-3].upper()}, "
         await ctx.send(f"Reloaded```{cogs}```")
     else:
         bot.reload_extension(f"cogs.{ext}")
